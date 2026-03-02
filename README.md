@@ -48,22 +48,29 @@ Attendance-portal/
 
 ---
 
-## 🗄 Database Schema
+## 🔥 Future Enhancements
 
-### 1️⃣ Users Table
-| Column | Type |
-|--------|------|
-| id | INT (PK) |
-| name | VARCHAR |
-| email | VARCHAR |
-| password | VARCHAR |
-| role | VARCHAR (student/faculty) |
+✔ Add **Password Hashing**  
+✔ Add **Attendance Reports / Export to Excel**  
+✔ Add **Admin Role**  
+✔ Improve UI with better layout  
+✔ Add validations (email, date format, empty fields)
 
-### 2️⃣ Attendance Table
-| Column | Type |
-|--------|------|
-| id | INT (PK) |
-| student_id | INT (FK) |
-| date | DATE |
-| status | VARCHAR (Present/Absent) |
+---
 
+## 📌 Learning Outcomes
+
+- Desktop GUI with Java Swing  
+- Multi-screen navigation  
+- Login + authentication  
+- MySQL Database interaction with JDBC  
+- Marking and viewing attendance
+
+---
+
+## 💻 Author
+
+**Suri**  
+GitHub: https://github.com/Suri-618
+
+⭐ If you like this project, give it a star!
