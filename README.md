@@ -33,18 +33,18 @@ This system allows faculty to manage attendance records and students to view the
 
 ## 🏗 Project Structure
 
-Attendance-portal/
-│
-├── DBConnection.java
-├── StudentLogin.java
-├── FacultyLogin.java
-├── StudentDashboard.java
-├── FacultyDashboard.java
-├── StudentRegister.java
-├── MarkAttendance.java
-├── ViewAttendance.java
-├── CreateSession.java
-└── *.java
+- **Attendance-portal/**
+- **│**
+-**├── DBConnection.java**
+- **├── StudentLogin.java**
+- **├── FacultyLogin.java**
+- **├── StudentDashboard.java**
+- **├── FacultyDashboard.java**
+- **├── StudentRegister.java**
+- **├── MarkAttendance.java**
+- **├── ViewAttendance.java**
+- **├── CreateSession.java**
+- **└── *.java**
 
 ---
 
