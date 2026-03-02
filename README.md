@@ -34,7 +34,7 @@ This system allows faculty to manage attendance records and students to view the
 ## 🏗 Project Structure
 
 - **Attendance-portal/**
-- **│**
+  │
 -**├── DBConnection.java**
 - **├── StudentLogin.java**
 - **├── FacultyLogin.java**
@@ -44,7 +44,7 @@ This system allows faculty to manage attendance records and students to view the
 - **├── MarkAttendance.java**
 - **├── ViewAttendance.java**
 - **├── CreateSession.java**
-- **└── *.java**
+- **└── .java**
 
 ---
 
