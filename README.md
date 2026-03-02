@@ -33,7 +33,7 @@ This system allows faculty to manage attendance records and students to view the
 
 ## 🏗 Project Structure
 
-- **Attendance-portal/**
+Attendance-portal/
   - **│**
 -**├── DBConnection.java**
 - **├── StudentLogin.java**
