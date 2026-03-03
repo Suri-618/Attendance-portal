@@ -11,7 +11,7 @@ public class FacultyLogin {
 
     public FacultyLogin() {
         JFrame f = new JFrame("Faculty Login");
-        f.setSize(400, 450);
+        f.setSize(400, 500);
         f.setUndecorated(true);
         f.setLocationRelativeTo(null);
 
@@ -121,8 +121,12 @@ public class FacultyLogin {
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         pass.setBounds(50, 245, 300, 40);
 
-        JButton login = createPremiumButton("Login", new Color(0, 123, 255), new Color(0, 105, 217));
-        login.setBounds(50, 320, 300, 45);
+        JButton login = createPremiumButton("Login (Already Exists)", new Color(40, 167, 69), new Color(33, 136, 56));
+        login.setBounds(50, 310, 300, 45);
+
+        JButton register = createPremiumButton("Register for New Faculty", new Color(0, 123, 255),
+                new Color(0, 105, 217));
+        register.setBounds(50, 365, 300, 45);
 
         // Back button
         JLabel backLabel = new JLabel("< Back", SwingConstants.LEFT);
@@ -166,17 +170,23 @@ public class FacultyLogin {
             }
         });
 
+        register.addActionListener(e -> {
+            new FacultyRegister();
+            f.dispose();
+        });
+
         mainPanel.add(l1);
         mainPanel.add(l2);
         mainPanel.add(id);
         mainPanel.add(pass);
         mainPanel.add(login);
+        mainPanel.add(register);
 
         // Footer
-        JLabel footerLabel = new JLabel("JUNO University Portal \u2026", SwingConstants.CENTER);
+        JLabel footerLabel = new JLabel("JUNO University Portal \u00A9 2026", SwingConstants.CENTER);
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         footerLabel.setForeground(new Color(100, 110, 120));
-        footerLabel.setBounds(0, 400, 400, 30);
+        footerLabel.setBounds(0, 450, 400, 30);
         mainPanel.add(footerLabel);
 
         f.add(mainPanel);
