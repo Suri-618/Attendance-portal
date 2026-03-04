@@ -1,12 +1,12 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public class MainFSA {
     private Point initialClick;
 
     public MainFSA() {
-        JFrame f = new JFrame("JUNO PORTAL");
+        JFrame f = new JFrame("CANDY.IO");
         f.setSize(400, 450);
         f.setUndecorated(true);
         f.setLocationRelativeTo(null);
@@ -75,7 +75,7 @@ public class MainFSA {
         mainPanel.add(closeLabel);
 
         // Title
-        JLabel titleLabel = new JLabel("Welcome to JUNO", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Welcome to CANDY.IO", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setBounds(0, 60, 400, 40);
@@ -108,7 +108,7 @@ public class MainFSA {
         mainPanel.add(sb);
 
         // Footer
-        JLabel footerLabel = new JLabel("JUNO University Portal \u00A9 2026", SwingConstants.CENTER);
+        JLabel footerLabel = new JLabel("CANDY.IO \u00A9 2026", SwingConstants.CENTER);
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         footerLabel.setForeground(new Color(100, 110, 120));
         footerLabel.setBounds(0, 400, 400, 30);

@@ -1,6 +1,6 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public class StudentDashboard {
     private Point initialClick;
@@ -105,7 +105,7 @@ public class StudentDashboard {
         mainPanel.add(lo);
 
         // Footer
-        JLabel footerLabel = new JLabel("JUNO University Portal \u00A9 2026", SwingConstants.CENTER);
+        JLabel footerLabel = new JLabel("CANDY.IO \u00A9 2026", SwingConstants.CENTER);
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         footerLabel.setForeground(new Color(100, 110, 120));
         footerLabel.setBounds(0, 350, 450, 30);
