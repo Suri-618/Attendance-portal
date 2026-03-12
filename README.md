@@ -12,26 +12,26 @@ easy attendance tracking and export.
 
 # 🚀 Features
 
-✅ Faculty & Student Authentication\
+✅ Faculty & Student Authentication
 - Faculty and students can register and login securely.
 
-✅ QR Code Based Attendance\
-- Faculty generates a session QR code.\
+✅ QR Code Based Attendance
+- Faculty generates a session QR code.
 - Students scan the QR code to mark attendance.
 
-✅ Session Management\
+✅ Session Management
 - Faculty can create attendance sessions for classes.
 
-✅ Attendance Tracking\
+✅ Attendance Tracking
 - Attendance is stored and managed in the database.
 
-✅ Excel Export\
+✅ Excel Export
 - Faculty can download attendance reports in Excel format.
 
-✅ Student Dashboard\
+✅ Student Dashboard
 - Students can view their attendance records.
 
-✅ Faculty Dashboard\
+✅ Faculty Dashboard
 - Faculty can manage sessions and view attendance.
 
 ------------------------------------------------------------------------
