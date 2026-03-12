@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -121,6 +126,10 @@ public class MarkAttendance {
         loadBtn.setBounds(300, 70, 150, 35);
         mainPanel.add(loadBtn);
 
+        JButton generateQRBtn = createPremiumButton("Generate QR", new Color(111, 66, 193), new Color(102, 16, 242));
+        generateQRBtn.setBounds(470, 70, 150, 35);
+        mainPanel.add(generateQRBtn);
+
         // Table Model Setup
         String[] cols = { "Roll No", "Name", "Present" };
         DefaultTableModel model = new DefaultTableModel(cols, 0) {
@@ -175,6 +184,36 @@ public class MarkAttendance {
                 JOptionPane.showMessageDialog(f, "Error loading students", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        generateQRBtn.addActionListener(e -> {
+            String sessionId = tfSession.getText();
+            if (sessionId.isEmpty()) {
+                JOptionPane.showMessageDialog(f, "Enter Session ID", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            try {
+                QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                BitMatrix bitMatrix = qrCodeWriter.encode(sessionId, BarcodeFormat.QR_CODE, 300, 300);
+                java.awt.image.BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+
+                JDialog dialog = new JDialog(f, "QR Code: " + sessionId, true);
+                dialog.setSize(350, 400);
+                dialog.setLocationRelativeTo(f);
+                dialog.setLayout(new BorderLayout());
+
+                JLabel imageLabel = new JLabel(new ImageIcon(qrImage), SwingConstants.CENTER);
+                dialog.add(imageLabel, BorderLayout.CENTER);
+
+                JLabel info = new JLabel("Students: Scan this to mark attendance.", SwingConstants.CENTER);
+                info.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                info.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                dialog.add(info, BorderLayout.SOUTH);
+
+                dialog.setVisible(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(f, "Error generating QR Code", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         saveBtn.addActionListener(e -> {
             String sessionId = tfSession.getText();
@@ -214,7 +253,27 @@ public class MarkAttendance {
             }
         });
 
-        f.add(mainPanel);
+                mainPanel.setPreferredSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMinimumSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMaximumSize(new Dimension(f.getWidth(), f.getHeight()));
+        
+        JPanel wrapperPanel = new JPanel(new java.awt.GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int tw = getWidth(), th = getHeight();
+                Color color1 = new Color(15, 20, 25);
+                Color color2 = new Color(30, 40, 50);
+                GradientPaint gp = new GradientPaint(0, 0, color1, tw, th, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, tw, th);
+            }
+        };
+        wrapperPanel.add(mainPanel, new java.awt.GridBagConstraints());
+        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        f.add(wrapperPanel);
         f.setVisible(true);
     }
 

@@ -8,7 +8,7 @@ public class FacultyRegister {
     private Point initialClick;
 
     public FacultyRegister() {
-        JFrame f = new JFrame("Register New Faculty");
+        JFrame f = new JFrame("Register");
         f.setSize(400, 560);
         f.setUndecorated(true);
         f.setLocationRelativeTo(null);
@@ -121,7 +121,7 @@ public class FacultyRegister {
         styleTextField(nameField);
         nameField.setBounds(50, 155, 300, 40);
 
-        JLabel l1 = new JLabel("New Faculty ID:");
+        JLabel l1 = new JLabel("Faculty ID:");
         l1.setFont(new Font("Segoe UI", Font.BOLD, 14));
         l1.setForeground(new Color(200, 210, 220));
         l1.setBounds(50, 210, 300, 20);
@@ -178,7 +178,8 @@ public class FacultyRegister {
                         .prepareStatement("INSERT INTO faculty (faculty_id, name, password) VALUES (?, ?, ?)");
                 ps.setString(1, idText);
                 ps.setString(2, nameText);
-                ps.setString(3, pwdText);
+                // Hash the password before storing
+                ps.setString(3, PasswordUtils.hashPassword(pwdText));
 
                 int rowsInserted = ps.executeUpdate();
                 if (rowsInserted > 0) {
@@ -213,7 +214,27 @@ public class FacultyRegister {
         footerLabel.setBounds(0, 520, 400, 30);
         mainPanel.add(footerLabel);
 
-        f.add(mainPanel);
+                mainPanel.setPreferredSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMinimumSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMaximumSize(new Dimension(f.getWidth(), f.getHeight()));
+        
+        JPanel wrapperPanel = new JPanel(new java.awt.GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int tw = getWidth(), th = getHeight();
+                Color color1 = new Color(15, 20, 25);
+                Color color2 = new Color(30, 40, 50);
+                GradientPaint gp = new GradientPaint(0, 0, color1, tw, th, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, tw, th);
+            }
+        };
+        wrapperPanel.add(mainPanel, new java.awt.GridBagConstraints());
+        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        f.add(wrapperPanel);
         f.setVisible(true);
     }
 

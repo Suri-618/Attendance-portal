@@ -18,6 +18,7 @@ public class ViewAttendance {
     private DefaultTableModel model;
     private String studentRollNo;
     private JFrame f;
+    private JLabel lblTotal, lblPresent, lblPercentage;
 
     public ViewAttendance(String rollNo) {
         this.studentRollNo = rollNo;
@@ -240,8 +241,30 @@ public class ViewAttendance {
         topContainer.add(headerPanel, BorderLayout.NORTH);
         topContainer.add(filterPanel, BorderLayout.SOUTH);
 
+        // Stats Panel
+        JPanel statsPanel = new JPanel(new GridLayout(1, 3));
+        statsPanel.setOpaque(false);
+        statsPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+
+        lblTotal = new JLabel("Total Classes: 0", SwingConstants.CENTER);
+        lblPresent = new JLabel("Present: 0", SwingConstants.CENTER);
+        lblPercentage = new JLabel("Attendance: 0%", SwingConstants.CENTER);
+
+        Font statsFont = new Font("Segoe UI", Font.BOLD, 18);
+        lblTotal.setFont(statsFont);
+        lblTotal.setForeground(Color.WHITE);
+        lblPresent.setFont(statsFont);
+        lblPresent.setForeground(new Color(40, 167, 69)); // Green
+        lblPercentage.setFont(statsFont);
+        lblPercentage.setForeground(Color.WHITE);
+
+        statsPanel.add(lblTotal);
+        statsPanel.add(lblPresent);
+        statsPanel.add(lblPercentage);
+
         mainPanel.add(topContainer, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(statsPanel, BorderLayout.SOUTH);
 
         // Action for Show
         showBtn.addActionListener(e -> {
@@ -275,7 +298,27 @@ public class ViewAttendance {
             loadData(filterType, selectedMonth, selectedYear, selectedDate);
         });
 
-        f.add(mainPanel);
+                mainPanel.setPreferredSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMinimumSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMaximumSize(new Dimension(f.getWidth(), f.getHeight()));
+        
+        JPanel wrapperPanel = new JPanel(new java.awt.GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int tw = getWidth(), th = getHeight();
+                Color color1 = new Color(15, 20, 25);
+                Color color2 = new Color(30, 40, 50);
+                GradientPaint gp = new GradientPaint(0, 0, color1, tw, th, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, tw, th);
+            }
+        };
+        wrapperPanel.add(mainPanel, new java.awt.GridBagConstraints());
+        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        f.add(wrapperPanel);
         f.setVisible(true);
 
         // Load initially
@@ -284,6 +327,8 @@ public class ViewAttendance {
 
     private void loadData(String filterType, Integer month, Integer year, String specificDate) {
         model.setRowCount(0); // clear
+        int totalClasses = 0;
+        int presentClasses = 0;
         try {
             Connection con = DBConnection.getConnection();
             if (con == null) {
@@ -316,12 +361,33 @@ public class ViewAttendance {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
+                String status = rs.getString(3);
                 model.addRow(new Object[] {
                         rs.getString(1),
                         rs.getDate(2),
-                        rs.getString(3)
+                        status
                 });
+                totalClasses++;
+                if ("Present".equalsIgnoreCase(status)) {
+                    presentClasses++;
+                }
             }
+
+            lblTotal.setText("Total Classes: " + totalClasses);
+            lblPresent.setText("Present: " + presentClasses);
+            if (totalClasses > 0) {
+                int percentage = (int) Math.round((presentClasses * 100.0) / totalClasses);
+                lblPercentage.setText("Attendance: " + percentage + "%");
+                if (percentage >= 75) {
+                    lblPercentage.setForeground(new Color(40, 167, 69)); // Green
+                } else {
+                    lblPercentage.setForeground(new Color(220, 53, 69)); // Red
+                }
+            } else {
+                lblPercentage.setText("Attendance: 0%");
+                lblPercentage.setForeground(Color.WHITE);
+            }
+
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(f, "Invalid Date Format. Please use YYYY-MM-DD.", "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -414,5 +480,119 @@ public class ViewAttendance {
 
         // Specifically for Header Text Alignment
         ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+    }
+
+    public static void showOverallPercentage(String studentRollNo, Component parent) {
+        int totalClasses = 0;
+        int presentClasses = 0;
+        try {
+            Connection con = DBConnection.getConnection();
+            if (con == null) {
+                JOptionPane.showMessageDialog(parent, "Database connection failed", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String query = "SELECT status FROM attendance a JOIN class_session cs ON a.session_id = cs.session_id WHERE a.regno=?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, studentRollNo);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String status = rs.getString(1);
+                totalClasses++;
+                if ("Present".equalsIgnoreCase(status)) {
+                    presentClasses++;
+                }
+            }
+
+            int percentage = 0;
+            if (totalClasses > 0) {
+                percentage = (int) Math.round((presentClasses * 100.0) / totalClasses);
+            }
+
+            JDialog d = new JDialog(parent != null ? (Frame) SwingUtilities.getWindowAncestor(parent) : null,
+                    "Overall Attendance", true);
+            d.setSize(300, 260);
+            d.setUndecorated(true);
+            if (parent != null)
+                d.setLocationRelativeTo(parent);
+            else
+                d.setLocationRelativeTo(null);
+
+            JPanel mainPanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    GradientPaint gp = new GradientPaint(0, 0, new Color(26, 31, 36), getWidth(), getHeight(),
+                            new Color(42, 51, 62));
+                    g2d.setPaint(gp);
+                    g2d.fillRect(0, 0, getWidth(), getHeight());
+                    g2d.setColor(new Color(60, 70, 80));
+                    g2d.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+                }
+            };
+            mainPanel.setLayout(null);
+
+            JLabel titleLabel = new JLabel("Attendance Summary", SwingConstants.CENTER);
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(Color.WHITE);
+            titleLabel.setBounds(0, 20, 300, 30);
+            mainPanel.add(titleLabel);
+
+            JLabel totalLabel = new JLabel("Total Classes: " + totalClasses, SwingConstants.CENTER);
+            totalLabel.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+            totalLabel.setForeground(new Color(200, 210, 220));
+            totalLabel.setBounds(0, 70, 300, 25);
+            mainPanel.add(totalLabel);
+
+            JLabel presentLabel = new JLabel("Present: " + presentClasses, SwingConstants.CENTER);
+            presentLabel.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+            presentLabel.setForeground(new Color(40, 167, 69));
+            presentLabel.setBounds(0, 100, 300, 25);
+            mainPanel.add(presentLabel);
+
+            JLabel percLabel = new JLabel("Attendance = " + percentage + "%", SwingConstants.CENTER);
+            percLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            percLabel.setForeground(percentage >= 75 ? new Color(40, 167, 69) : new Color(220, 53, 69));
+            percLabel.setBounds(0, 140, 300, 30);
+            mainPanel.add(percLabel);
+
+            JButton closeBtn = new JButton("Close") {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    if (getModel().isArmed() || getModel().isPressed()) {
+                        g2.setColor(new Color(200, 35, 51));
+                    } else if (getModel().isRollover()) {
+                        g2.setColor(new Color(220, 53, 69));
+                    } else {
+                        g2.setColor(new Color(220, 53, 69));
+                    }
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                    g2.dispose();
+                    super.paintComponent(g);
+                }
+            };
+            closeBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            closeBtn.setForeground(Color.WHITE);
+            closeBtn.setFocusPainted(false);
+            closeBtn.setBorderPainted(false);
+            closeBtn.setContentAreaFilled(false);
+            closeBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            closeBtn.setBounds(100, 200, 100, 35);
+            closeBtn.addActionListener(e -> d.dispose());
+            mainPanel.add(closeBtn);
+
+            d.add(mainPanel);
+            d.setVisible(true);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(parent, "Database Error: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 }

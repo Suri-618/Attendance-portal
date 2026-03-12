@@ -114,7 +114,27 @@ public class MainFSA {
         footerLabel.setBounds(0, 400, 400, 30);
         mainPanel.add(footerLabel);
 
-        f.add(mainPanel);
+                mainPanel.setPreferredSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMinimumSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMaximumSize(new Dimension(f.getWidth(), f.getHeight()));
+        
+        JPanel wrapperPanel = new JPanel(new java.awt.GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int tw = getWidth(), th = getHeight();
+                Color color1 = new Color(15, 20, 25);
+                Color color2 = new Color(30, 40, 50);
+                GradientPaint gp = new GradientPaint(0, 0, color1, tw, th, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, tw, th);
+            }
+        };
+        wrapperPanel.add(mainPanel, new java.awt.GridBagConstraints());
+        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        f.add(wrapperPanel);
         f.setVisible(true);
     }
 

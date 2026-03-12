@@ -8,7 +8,7 @@ public class FacultyDashboard {
     public FacultyDashboard(String facultyId) {
 
         JFrame f = new JFrame("Faculty Dashboard");
-        f.setSize(450, 480);
+        f.setSize(450, 550);
         f.setUndecorated(true);
         f.setLocationRelativeTo(null);
 
@@ -90,11 +90,13 @@ public class FacultyDashboard {
         // Buttons
         JButton cs = createPremiumButton("Create Session", new Color(0, 123, 255), new Color(0, 105, 217));
         JButton ma = createPremiumButton("Mark Attendance", new Color(40, 167, 69), new Color(33, 136, 56));
+        JButton ea = createPremiumButton("Export Attendance", new Color(23, 162, 184), new Color(19, 132, 150));
         JButton lo = createPremiumButton("Logout", new Color(220, 53, 69), new Color(200, 35, 51));
 
-        cs.setBounds(100, 160, 250, 50);
-        ma.setBounds(100, 230, 250, 50);
-        lo.setBounds(100, 300, 250, 50);
+        cs.setBounds(100, 150, 250, 50);
+        ma.setBounds(100, 220, 250, 50);
+        ea.setBounds(100, 290, 250, 50);
+        lo.setBounds(100, 360, 250, 50);
 
         cs.addActionListener(e -> {
             new CreateSession(facultyId);
@@ -106,6 +108,10 @@ public class FacultyDashboard {
             f.dispose();
         });
 
+        ea.addActionListener(e -> {
+            ExcelExporter.exportAttendanceToExcel(facultyId, f);
+        });
+
         lo.addActionListener(e -> {
             new MainFSA();
             f.dispose();
@@ -113,16 +119,37 @@ public class FacultyDashboard {
 
         mainPanel.add(cs);
         mainPanel.add(ma);
+        mainPanel.add(ea);
         mainPanel.add(lo);
 
         // Footer
         JLabel footerLabel = new JLabel("CANDY.IO \u00A9 2026", SwingConstants.CENTER);
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         footerLabel.setForeground(new Color(100, 110, 120));
-        footerLabel.setBounds(0, 430, 450, 30);
+        footerLabel.setBounds(0, 500, 450, 30);
         mainPanel.add(footerLabel);
 
-        f.add(mainPanel);
+                mainPanel.setPreferredSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMinimumSize(new Dimension(f.getWidth(), f.getHeight()));
+        mainPanel.setMaximumSize(new Dimension(f.getWidth(), f.getHeight()));
+        
+        JPanel wrapperPanel = new JPanel(new java.awt.GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int tw = getWidth(), th = getHeight();
+                Color color1 = new Color(15, 20, 25);
+                Color color2 = new Color(30, 40, 50);
+                GradientPaint gp = new GradientPaint(0, 0, color1, tw, th, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, tw, th);
+            }
+        };
+        wrapperPanel.add(mainPanel, new java.awt.GridBagConstraints());
+        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        f.add(wrapperPanel);
         f.setVisible(true);
     }
 
